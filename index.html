@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I am So Sorry My Love 💖</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Hind Siliguri', 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 50%, #ffd1dc 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .cursive-font {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .float-element {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Heartfall Animation */
+        .heart-particle {
+            position: fixed;
+            top: -10%;
+            user-select: none;
+            pointer-events: none;
+            z-index: 0;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Envelope Styles */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+        .letter-content {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .letter-content.open {
+            max-height: 1000px;
+            opacity: 1;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        /* Soft Glow Shadows */
+        .pink-glow {
+            box-shadow: 0 10px 30px -5px rgba(244, 114, 182, 0.4);
+        }
+        .pink-glow-hover:hover {
+            box-shadow: 0 15px 35px -5px rgba(244, 114, 182, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ffe4e1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-gray-800 relative pb-16">
+
+    <!-- Canvas for Floating Hearts -->
+    <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Music Player Toggle -->
+    <div class="fixed top-5 right-5 z-50">
+        <button id="musicToggle" class="bg-white/80 backdrop-blur-md p-3.5 rounded-full shadow-lg text-rose-500 hover:text-rose-600 transition-all duration-300 hover:scale-110 flex items-center justify-center w-12 h-12">
+            <i id="musicIcon" class="fas font-solid fa-music text-xl"></i>
+        </button>
+        <!-- Soft Romantic Instrumental Background Audio -->
+        <audio id="bgMusic" loop preload="auto">
+            <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112188.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 max-w-4xl mx-auto px-4 pt-10 sm:pt-16">
+
+        <!-- Hero Section -->
+        <div class="text-center space-y-4 mb-12">
+            <span class="inline-block px-4 py-1.5 bg-rose-100 text-rose-600 rounded-full text-sm font-semibold tracking-wide uppercase shadow-sm">
+                <i class="fas fa-heart mr-1.5"></i> My Sincere Apology
+            </span>
+            <h1 class="text-4xl sm:text-6xl font-extrabold text-rose-600 tracking-tight leading-tight">
+                I'm Really Sorry, My Love <span class="cursive-font text-5xl sm:text-7xl text-rose-500 block sm:inline mt-2 sm:mt-0">❤️</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-600 max-w-xl mx-auto font-medium">
+                তোমাকে কষ্ট দেওয়া আমার জীবনের সবচেয়ে বড় ভুল ছিল। প্লিজ আমার মনের কথাটা একবার শোনো...
+            </p>
+        </div>
+
+        <!-- Interactive Envelope / Letter Section -->
+        <div class="mb-16">
+            <div class="bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border border-rose-100 pink-glow transition-all duration-300">
+                <div id="envelopeHeader" onclick="toggleLetter()" class="cursor-pointer text-center group">
+                    <div class="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4 text-rose-500 group-hover:scale-110 transition-transform duration-300">
+                        <i id="envelopeIcon" class="fas fa-envelope-open-text text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 group-hover:text-rose-600 transition-colors">
+                        আমার হৃদয়ের চিঠি (চিঠিটি খুলতে এখানে ক্লিক করো)
+                    </h2>
+                    <p class="text-sm text-gray-400 mt-1">Tap to open letter ✨</p>
+                </div>
+
+                <!-- Unfolding Letter Body -->
+                <div id="letterContent" class="letter-content border-t border-rose-100 mt-6 text-gray-700 space-y-4 leading-relaxed sm:text-lg">
+                    <p class="font-semibold text-rose-600 text-xl">আমার একমাত্র ভালোবাসা,</p>
+                    <p>
+                        আমি জানি আমি অন্য একটা মেয়ের সাথে কথা বলে তোমার মনে অনেক কষ্ট দিয়েছি। তোমাকে এভাবে কাঁদানো বা অভিমান করানো কখনোই আমার উদ্দেশ্য ছিল না। তোমার ভালোবাসার জায়গায় অন্য কেউই আসতে পারবে না, আর আমি বুঝতে পেরেছি আমি কত বড় ভুল করেছি।
+                    </p>
+                    <p>
+                        তোমার চোখের এক ফোঁটা জলও আমার কাছে অনেক দামী। আমার অসাবধানতার কারণে তোমাকে যে কষ্ট সহ্য করতে হয়েছে, তার জন্য আমি মন থেকে অত্যন্ত দুঃখিত। 
+                    </p>
+                    <p>
+                        আমি তোমাকে কথা দিচ্ছি, এরপর থেকে আমার সমস্ত মনোযোগ, ভালোবাসা আর প্রাধান্য শুধুই তোমার জন্য থাকবে। আমার জীবনে তুমি ছাড়া আর কেউ ছিল না, নেই, আর কখনো থাকবেও না। প্লিজ তোমার এই পাগলটাকে ক্ষমা করে দাও! 🥺❤️
+                    </p>
+                    <div class="pt-4 text-right">
+                        <p class="cursive-font text-3xl text-rose-500">Forever Yours,</p>
+                        <p class="font-bold text-gray-800">তোমার প্রিয় মানুষ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Reasons Cards Section -->
+        <div class="mb-16">
+            <h2 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-8">
+                কেন তুমিই আমার জীবনের সব কিছু? ✨
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div onclick="showReasonModal('আমার হাসি & খুশি', 'তোমার একটা মিষ্টি হাসিতেই আমার পুরো দিনের সব ক্লান্তি দূর হয়ে যায়। তোমাকে ছাড়া আমার জীবন একদম অসম্পূর্ণ।', 'fa-smile-beam')" 
+                     class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-rose-100 shadow-md pink-glow-hover cursor-pointer transition-all duration-300 text-center">
+                    <div class="w-14 h-14 bg-pink-100 text-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fas fa-smile-beam"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">তোমার মিষ্টি হাসি</h3>
+                    <p class="text-sm text-gray-500">যা আমার পুরো দুনিয়াকে উজ্জ্বল করে তোলে...</p>
+                    <span class="inline-block mt-4 text-xs font-semibold text-rose-500">ট্যাপ করো 💖</span>
+                </div>
+
+                <!-- Card 2 -->
+                <div onclick="showReasonModal('তোমার নিঃস্বার্থ ভালোবাসা', 'তুমি যেভাবে আমাকে আগলে রাখো আর ভালোবাসো, পৃথিবীর আর কোনো কিছুতেই তা পাওয়া সম্ভব না। তুমি আমার সবচেয়ে বড় উপহার।', 'fa-heart')" 
+                     class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-rose-100 shadow-md pink-glow-hover cursor-pointer transition-all duration-300 text-center">
+                    <div class="w-14 h-14 bg-rose-100 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">তোমার ভালোবাসা</h3>
+                    <p class="text-sm text-gray-500">যে ভালোবাসার কোনো তুলনা হয় না...</p>
+                    <span class="inline-block mt-4 text-xs font-semibold text-rose-500">ট্যাপ করো 💖</span>
+                </div>
+
+                <!-- Card 3 -->
+                <div onclick="showReasonModal('আমার ভবিষ্যতের স্বপ্ন', 'আমার প্রতিটি স্বপ্নে, প্রতিটি কামনায় শুধুই তুমি আছো। তোমার সাথে সারাটা জীবন ভালোবাসায় কাটিয়ে দিতে চাই।', 'fa-infinity')" 
+                     class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-rose-100 shadow-md pink-glow-hover cursor-pointer transition-all duration-300 text-center">
+                    <div class="w-14 h-14 bg-purple-100 text-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">চিরকালের সাথী</h3>
+                    <p class="text-sm text-gray-500">আমার বর্তমান এবং ভবিষ্যতের সব কিছু তুমি...</p>
+                    <span class="inline-block mt-4 text-xs font-semibold text-rose-500">ট্যাপ করো 💖</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Forgiveness Section -->
+        <div class="bg-white/90 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-2xl border border-rose-200 text-center relative overflow-hidden mb-12 pink-glow">
+            <div id="forgivenessQuestion">
+                <div class="inline-block p-4 bg-rose-50 rounded-full mb-4">
+                    <i class="fas fa-hands-holding-heart text-4xl text-rose-500 animate-pulse"></i>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-4">
+                    তুমি কি আমাকে ক্ষমা করে দেবে? 🥺
+                </h2>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto">
+                    আমি আর কখনো তোমার চোখে জল আসতে দেবো না। দয়া করে রাগ ভাঙো না প্লিজ?
+                </p>
+
+                <!-- Interactive Buttons Container -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 min-h-[120px] relative">
+                    <!-- Yes Button -->
+                    <button id="yesBtn" onclick="handleYesClick()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold text-lg rounded-full shadow-lg hover:from-rose-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
+                        <i class="fas fa-heart"></i> হ্যাঁ, ক্ষমা করে দিলাম! ❤️
+                    </button>
+
+                    <!-- Runaway No Button -->
+                    <button id="noBtn" onmouseover="moveNoButton()" onclick="moveNoButton()" class="w-full sm:w-auto px-8 py-4 bg-gray-200 text-gray-700 font-bold text-lg rounded-full transition-all duration-200 sm:absolute sm:right-1/4">
+                        না, পারবো না 😜
+                    </button>
+                </div>
+            </div>
+
+            <!-- Celebration Message (Hidden initially) -->
+            <div id="celebrationMessage" class="hidden space-y-6 py-6 animate-fade-in">
+                <div class="w-24 h-24 bg-rose-100 rounded-full flex items-center justify-center mx-auto text-rose-500 text-5xl float-element">
+                    💖
+                </div>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-rose-600">
+                    থ্যাঙ্ক ইউ মাই লাভ! 🥳🎉
+                </h3>
+                <p class="text-xl text-gray-700 max-w-lg mx-auto leading-relaxed">
+                    আই লাভ ইউ সো মাচ! তোমাকে আর কোনোদিন কষ্ট দেবো না, প্রমিজ! তোমাকে অনেক ভালোবাসি! 🥰❤️✨
+                </p>
+                <div class="pt-4">
+                    <button onclick="resetForgiveness()" class="px-6 py-2.5 bg-rose-100 text-rose-600 font-semibold rounded-full hover:bg-rose-200 transition-colors">
+                        পুনরায় দেখো ✨
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Reason Modal -->
+    <div id="reasonModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-rose-100 text-center transform transition-all">
+            <div id="modalIconContainer" class="w-16 h-16 bg-rose-100 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i id="modalIcon" class="fas fa-heart"></i>
+            </div>
+            <h3 id="modalTitle" class="text-2xl font-bold text-gray-800 mb-3"></h3>
+            <p id="modalBody" class="text-gray-600 text-base leading-relaxed mb-6"></p>
+            <button onclick="closeReasonModal()" class="w-full py-3 bg-rose-500 text-white font-bold rounded-xl shadow-md hover:bg-rose-600 transition-colors">
+                আমি তোমাকে ভালোবাসি ❤️
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Floating Hearts Background Generation
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartIcons = ['❤️', '💖', '🌸', '✨', '💕', '🌹'];
+            const heartCount = 20;
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-particle';
+                heart.innerHTML = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                heart.style.animationDelay = (Math.random() * 5) + 's';
+                heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                heart.style.opacity = Math.random() * 0.7 + 0.3;
+                container.appendChild(heart);
+            }
+        }
+
+        // Music Control Logic
+        const bgMusic = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+
+        musicToggle.addEventListener('click', () => {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicIcon.className = 'fas fa-music text-xl';
+                musicToggle.classList.remove('text-rose-600');
+                musicToggle.classList.add('text-rose-400');
+            } else {
+                bgMusic.play().then(() => {
+                    musicIcon.className = 'fas fa-pause text-xl';
+                    musicToggle.classList.add('text-rose-600');
+                }).catch(err => {
+                    console.log("Audio play blocked: ", err);
+                });
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // Toggle Letter Logic
+        let isLetterOpen = false;
+        function toggleLetter() {
+            const letterContent = document.getElementById('letterContent');
+            const envelopeIcon = document.getElementById('envelopeIcon');
+            isLetterOpen = !isLetterOpen;
+
+            if (isLetterOpen) {
+                letterContent.classList.add('open');
+                envelopeIcon.className = 'fas fa-envelope-open text-3xl text-rose-500';
+            } else {
+                letterContent.classList.remove('open');
+                envelopeIcon.className = 'fas fa-envelope-open-text text-3xl text-rose-400';
+            }
+        }
+
+        // Reason Modal Functions
+        function showReasonModal(title, body, iconClass) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalBody').innerText = body;
+            document.getElementById('modalIcon').className = `fas ${iconClass}`;
+            document.getElementById('reasonModal').classList.remove('hidden');
+        }
+
+        function closeReasonModal() {
+            document.getElementById('reasonModal').classList.add('hidden');
+        }
+
+        // Playful Runaway No Button Logic
+        let noClickCount = 0;
+        function moveNoButton() {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            noClickCount++;
+
+            // Gradually increase Yes button size to make it easier to click
+            const currentScale = 1 + (noClickCount * 0.1);
+            yesBtn.style.transform = `scale(${currentScale})`;
+
+            // Random positions within screen bounds
+            const x = Math.random() * (window.innerWidth < 640 ? 150 : 300) - 150;
+            const y = Math.random() * 150 - 75;
+
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+
+            // Change No button text playfully
+            const playfulTexts = [
+                "একটু চিন্তা করো... 🥺",
+                "প্লিজ এভাবে না করো না! 💔",
+                "আর একটা সুযোগ দাও! 🙏",
+                "আমি আসলেই সরি! 💕",
+                "সত্যি ক্ষমা করবে না? 😭"
+            ];
+            noBtn.innerText = playfulTexts[Math.min(noClickCount, playfulTexts.length - 1)];
+        }
+
+        // Handle Yes Button Click with Heart & Confetti Explosion
+        function handleYesClick() {
+            document.getElementById('forgivenessQuestion').classList.add('hidden');
+            document.getElementById('celebrationMessage').classList.remove('hidden');
+
+            // Trigger Confetti Explosion
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#f472b6', '#ec4899', '#e11d48']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#f472b6', '#ec4899', '#e11d48']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+
+            // Try to auto-play romantic background music if not playing
+            if (!isPlaying) {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    musicIcon.className = 'fas fa-pause text-xl';
+                    musicToggle.classList.add('text-rose-600');
+                }).catch(() => {});
+            }
+        }
+
+        function resetForgiveness() {
+            document.getElementById('forgivenessQuestion').classList.remove('hidden');
+            document.getElementById('celebrationMessage').classList.add('hidden');
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            noBtn.style.transform = 'none';
+            noBtn.innerText = 'না, পারবো না 😜';
+            yesBtn.style.transform = 'none';
+            noClickCount = 0;
+        }
+
+        // Initialize on Window Load
+        window.onload = function() {
+            createHearts();
+        };
+    </script>
+</body>
+</html>
